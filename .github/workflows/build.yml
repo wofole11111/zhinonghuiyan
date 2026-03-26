@@ -17,24 +17,28 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Install Buildozer
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y python3-pip git zip unzip openjdk-17-jdk
-          pip install buildozer
+          pip install --upgrade pip
+          pip install cython buildozer
 
       - name: Build APK
         run: |
           buildozer init
+          # 修改配置
           sed -i 's/title = My Application/title = 智农慧眼/' buildozer.spec
-          sed -i 's/package.name = myapp/package.name = testapp/' buildozer.spec
-          sed -i 's/package.domain = org.test/package.domain = com.test/' buildozer.spec
-          sed -i 's/requirements = python3,kivy/requirements = python3,kivy/' buildozer.spec
-          sed -i 's/# android.permissions =/android.permissions = INTERNET/' buildozer.spec
+          sed -i 's/package.name = myapp/package.name = zhinonghuiyan/' buildozer.spec
+          sed -i 's/package.domain = org.test/package.domain = com.zhinong/' buildozer.spec
+          sed -i 's/requirements = python3,kivy/requirements = python3,kivy,Pillow/' buildozer.spec
+          sed -i 's/# android.permissions =/android.permissions = CAMERA,INTERNET/' buildozer.spec
+          sed -i 's/ orientation = landscape/ orientation = portrait/' buildozer.spec
+          # 开始打包
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: testapp
+          name: zhinonghuiyan
           path: bin/*.apk
